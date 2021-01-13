@@ -3,6 +3,7 @@ import BlogList from "./BlogList";
 
 const Home = () => {
     const[blogs , setBlogs] = useState([]);
+    const [isPending, setIsPending] = useState(true);
     const handleDelete = (id) => {
         const newBlogs = blogs.filter((blog) => {
             return blog.id !== id;
@@ -12,12 +13,16 @@ const Home = () => {
     useEffect(() => {
         fetch('http://localhost:8000/blogs')
             .then((res) => res.json())
-            .then((data) => setBlogs(data))
+            .then((data) => {
+                setBlogs(data);
+                setIsPending(false);
+            })
             .catch((error) => console.log(error.message));
     }, []);
     return ( 
         <div className="home">
-            <BlogList blogs = {blogs}  title="All Blogs!" handleDelete = {handleDelete} />
+            {isPending && <div>Loading..</div>}
+            {blogs && <BlogList blogs = {blogs}  title="All Blogs!" handleDelete = {handleDelete} /> }
         </div>
     );
 }
